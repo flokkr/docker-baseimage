@@ -2,7 +2,7 @@
 
 
 DEST=/tmp/consul-template.json
-PREFIX=${CONSUL_PREFIX:-hadoop}
+PREFIX=${CONSUL_PREFIX:-conf}
 CONSUL_SERVER=${CONSUL_SERVER:-127.0.0.1:8500}
 function generate-template() {
    DEFAULTS_DIR=${DEFAULTS_DIR:-defaults}

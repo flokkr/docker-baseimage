@@ -1,5 +1,5 @@
 #!/bin/bash
-CONFIG_TYPE=${BIGDATA_CONFIG_TYPE:-simple}
+CONFIG_TYPE=${CONFIG_TYPE:-simple}
 echo "Called launcher with command parameters: $@"
 echo "Configuration type: $CONFIG_TYPE"
 ./configuration/$CONFIG_TYPE.sh $@
