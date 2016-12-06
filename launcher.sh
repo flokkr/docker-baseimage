@@ -5,5 +5,5 @@ echo "Configuration type: $CONFIG_TYPE"
 if [ -z "$1" ] ; then
    /bin/bash
 else
-   $1
+   $@
 fi
