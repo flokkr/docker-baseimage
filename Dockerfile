@@ -7,5 +7,5 @@ RUN wget https://releases.hashicorp.com/consul-template/0.16.0/consul-template_0
 RUN mkdir configuration
 RUN mkdir defaults
 ADD launcher.sh ./
-ADD configuration/simple.sh configuration/simple.sh
+ADD configuration/* configuration/
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/opt/launcher.sh"]
