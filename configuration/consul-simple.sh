@@ -10,7 +10,7 @@ function generate-template() {
    for conf in `ls -1 $DEFAULTS_DIR`; do
       echo "template{" >> $DEST
       echo "   source=\"/tmp/$conf.template\"" >> $DEST
-      echo "{{key \"$PREFIX/$conf\"}}\"" >> /tmp/$conf.template
+      echo "{{key \"$PREFIX/$conf\"}}" > /tmp/$conf.template
       echo "   destination=\"$CONF_DIR/$conf\"" >> $DEST
       echo "}" >> $DEST
    done
@@ -21,7 +21,7 @@ function generate-template() {
 
 function generate-starter(){
    echo "consul-template -config=/tmp/consul-template.json" > /opt/custom_launcher.sh
-   chmod +x custom_launcher.sh
+   chmod +x /opt/custom_launcher.sh
 }
 generate-template $@
 generate-starter
