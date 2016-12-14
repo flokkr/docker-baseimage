@@ -1,4 +1,7 @@
 #!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/conversions.sh
+
 function env-to-conf() {
    envname=`echo $1 | awk '{print toupper($1)}'`
    env | grep $envname |  sed -e "s/^$envname_//" | awk -F "=" '{gsub("_",".",$1);print $1 "=" $2}' >> $CONF_DIR/$1.env
@@ -7,19 +10,6 @@ function env-to-conf() {
 
 function merge() {
    cat $CONF_DIR/$1.env $DEFAULTS_DIR/$1.$2| awk -F "=" '{if (!seen[$1]++) print}' > $CONF_DIR/$1.conf
-}
-
-function env-to-cfg(){
-  cp $1 $2
-}
-function env-to-env() {
-   cp $1 $2
-}
-
-function env-to-xml() {
-      echo "<configuration>" > $2
-      cat $1 | awk -F "=" 'NF {print "<property><name>" $1 "</name><value>" $2 "</value></property>"}' >> $2
-      echo "</configuration>" >> $2
 }
 
 function configure-from-defaults() {
