@@ -1,0 +1,5 @@
+#!/bin/bash
+#Configurations from {% env "KEY_PATH" %}
+consul-template \
+{%range ls (env "KEY_PATH")%}   -template=<(echo '{{key "{%env "KEY_PATH"%}{%.Key%}"}}'):{%env "CONF_DIR"%}/{%.Key%} \
+{%end%}   -exec "{% env "EXECUTOR"%}"

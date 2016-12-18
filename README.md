@@ -21,12 +21,13 @@ Main behaviours:
 * All the hadoop configurations could be overridden with environment variables, with the form: ```CONFIG_FILE_NAME_CONFIG_NAME``` For example CORE_SITE_FS_DEFAULT_NAME=hdfs://xxx will generate a ```fs.default.name=hdfs://xxx``` entry to the core-site.xml, but *only at the first time*, if config file doesn't exists
 * But this is only works if there is a (possible empty) default file in the /opt/defaults directory. (Eg. if a `/opt/defaults/core-site.xml` exists, the ```CORE_SITE_fs_default_name=hdfs://xxxx:9000``` will be valid
 
-### Simple consul config loading
+### Consul config loading
 
-Could be activated with ```CONFIG_TYPE=consul-simple```
+Could be activated with ```CONFIG_TYPE=consul```
 
-* The starter script iterates over the existing files in defaults directory. All the files will be downloaded from the consul key value store and the application process will be started with consul-template (enable an automatic restart in case of configuration change)
-* ```CONSUL_PREFIX``` contains the prefix of the subtree in the consul key value store (default is ```conf```)
+* The starter script list the configuration file names based on a consul key prefix. All the files will be downloaded from the consul key value store and the application process will be started with consul-template (enable an automatic restart in case of configuration file change)
+* ```CONSUL_PATH``` contains the prefix of the subtree in the consul key value store (default is ```conf```)
+* if ``CONSUL_PATH`` is not set you can use ``CONSUL_PREFIX`` and ``CONSUL_KEY`` values. As the default ``CONSUL_PREFIX`` is ``config``, it's enough to set the ``CONSUL_KEY`` if the configuration is under the key  ``config/something``
 * Consul server location could set with ```CONSUL_SERVER``` environment variable (default is ```localhost:8500```)
 
 ### Spring conig server configuration loading
@@ -57,6 +58,6 @@ At the next step we download the required files one by one and convert to the de
 
 #### Configuration
 
-CONFIG_SERVER_URL: the url of the config server eg. http://localhost:8888
-CONFIG_GROUP: the profile part of the config server query (eg. hdfs, namenode, etc.)
-CONF_DIR: the destination directory
+* ``CONFIG_SERVER_URL``: the url of the config server eg. http://localhost:8888
+* ``CONFIG_GROUP``: the profile part of the config server query (eg. hdfs, namenode, etc.)
+* ``CONF_DIR``: the destination directory
