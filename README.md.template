@@ -1,0 +1,4 @@
+# Bigdata base image
+
+This repository contains docker images [for all other](https://github.com/elek/bigdata-docker) hadoop/bigdata related docker images.
+
