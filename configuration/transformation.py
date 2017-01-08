@@ -29,7 +29,7 @@ def to_cfg(content):
     result = ""
     props = process_properties(content)
     for key in props.keys():
-        result += "{}=\{}\n".format(key, props[key])
+        result += "{}={}\n".format(key, props[key])
     return result
 
 

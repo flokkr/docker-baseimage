@@ -5,7 +5,7 @@ from shutil import copyfile
 
 import transformation
 
-known_formats = ['xml', 'properties', 'yaml', 'env', "sh"]
+known_formats = ['xml', 'properties', 'env', "sh", "cfg", 'conf']
 output_dir = os.environ["CONF_DIR"]
 
 defaults_dir = "defaults"
