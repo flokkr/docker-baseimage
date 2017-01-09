@@ -1,2 +1,4 @@
 *.retry
+*.pyc
+configuration/test
 group_vars

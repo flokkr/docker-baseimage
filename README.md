@@ -65,7 +65,9 @@ HBASE-SITE.XML_hbase_zookeeper_quorum: "localhost"
  * conf: key value pairs with space as spearator (spark-defaults is an example)
  * env: key value paris with ```=``` as separator
  * sh: as the env but also includes the export keyword
- 
+ * yaml: yaml file representation (only basic map and list are supported)
+ * yml: same
+
 #### Example
 
 The simple directory in the [bigdata-docker](https://github.com/elek/bigdata-docker) project contains a [docker-compose](https://github.com/elek/bigdata-docker/blob/master/simple/docker-compose.yaml) example using simple configuration loading
