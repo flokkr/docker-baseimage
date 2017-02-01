@@ -107,9 +107,6 @@ class Starter():
         parent_dir = os.path.dirname(dest_file)
         mkdir_p(parent_dir)
 
-        if key.endswith("base64"):
-            key = key[:-len("base64") - 1]
-            value = base64.b64decode(value)
         with open(dest_file, "wb") as file:
             file.write(value)
 
