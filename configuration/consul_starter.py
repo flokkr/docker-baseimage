@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
-import base64
+import configparser
+import re
 import signal
 import subprocess
 import os
@@ -11,6 +12,8 @@ import threading
 
 import atexit
 import time
+
+from configuration import client_transformation
 
 sys.path = sys.path[1:]
 import consul as consul_client
@@ -62,6 +65,7 @@ class Starter():
         parser = argparse.ArgumentParser()
         parser.add_argument("command", help="Command to start", nargs="*")
         parser.add_argument("--prefix", help="Consul tree prefix")
+        parser.add_argument("--path", help="Consul tree path")
         parser.add_argument("--destination", help="Destination directory")
         args = parser.parse_args(args=args)
 
@@ -71,29 +75,44 @@ class Starter():
 
         atexit.register(self.stop_process)
 
-        self.poll_consul(args.prefix, args.destination, args.command)
+        self.poll_consul(args.prefix, args.path, args.destination, args.command)
 
-    def poll_consul(self, prefix, destination, loop=True):
+    def poll_consul(self, prefix, path, destination, loop=True):
 
-        c = consul_client.Consul()
+        consul = consul_client.Consul()
         index = None
         resources = {}
         first = True
+
         try:
+            configuration = ""
+            configuration_entry = consul.kv.get(prefix + "/config.ini")
+            if configuration_entry:
+                configuration = configuration_entry[1]['Value'].decode('utf-8')
             while first or loop:
-                index, data = c.kv.get('conf', recurse=True, index=index)
+                consul_subtree_path = (prefix + "/" + path).strip("/")
+                index, data = consul.kv.get(consul_subtree_path, recurse=True, index=index)
+                changed = []
                 for d in data:
                     key = d['Key']
                     value = d['Value']
                     if key not in resources.keys():
                         resources[key] = Resource(key, "")
                     resource = resources[key]
-                    changed = False
                     if resource.content != value:
                         if value:
-                            changed = True
-                            self.write_to_file(destination, key, value)
+                            changed.append(key)
                             resource.content = value
+                for key in changed:
+                    value = resources[key].content
+                    transformed_value = resources[key].content
+                    try:
+                        if configuration:
+                            transformed_value = self.transform_value(configuration, consul, key, value)
+                        relative_key = key.replace(consul_subtree_path, "").strip('/')
+                        self.write_to_file(destination, relative_key, transformed_value)
+                    except:
+                        print("Unexpected error during a write to {}: {}".format(key, sys.exc_info()[0]))
                 if not first and self.process and self.process.returncode is None and changed:
                     self.restart = True
                     os.kill(self.process.pid, signal.SIGTERM)
@@ -109,6 +128,18 @@ class Starter():
 
         with open(dest_file, "wb") as file:
             file.write(value)
+
+    def transform_value(self, configuration, consul, key, value):
+        if not configuration:
+            return value
+        config = configparser.ConfigParser()
+        config.read_string(configuration, "config.ini")
+        if config['transformation']:
+            for transformation in config['transformation'].keys():
+                pattern = config['transformation'][transformation]
+                if re.match(pattern, key):
+                    return getattr(client_transformation, transformation)(value, consul)
+        return value
 
 
 def main():
