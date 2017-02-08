@@ -14,6 +14,7 @@ import threading
 import atexit
 import time
 
+import thread
 from configuration import client_transformation
 
 sys.path = sys.path[1:]
@@ -59,10 +60,13 @@ class Starter():
                     time.sleep(10)
             else:
                 self.loop = False
+        print("Interrupt main thread")
+        os.kill(os.getpid(), signal.SIGINT)
+
 
 
     def stop_process(self):
-        if self.process and self.process.returncode != None:
+        if self.process and self.process.returncode == None:
             print("Killing process")
             self.process.kill()
 
@@ -90,19 +94,19 @@ class Starter():
 
     def poll_consul(self, prefix, path, destination, loop=True):
 
-        consul = consul_client.Consul()
+        self.consul = consul_client.Consul()
         index = None
         resources = {}
         first = True
 
         try:
             configuration = ""
-            configuration_entry = consul.kv.get(prefix + "/config.ini")
+            configuration_entry = self.consul.kv.get(prefix + "/config.ini")
             if configuration_entry:
                 configuration = configuration_entry[1]['Value'].decode('utf-8')
             while first or loop:
                 consul_subtree_path = (prefix + "/" + path).strip("/")
-                index, data = consul.kv.get(consul_subtree_path, recurse=True, index=index)
+                index, data = self.consul.kv.get(consul_subtree_path, recurse=True, index=index)
                 changed = []
                 for d in data:
                     key = d['Key']
@@ -118,12 +122,8 @@ class Starter():
                     value = resources[key].content
                     transformed_value = resources[key].content
                     try:
-
-
-
-
                         if configuration:
-                            transformed_value = self.transform_value(configuration, consul, key, value)
+                            transformed_value = self.transform_value(configuration, self.consul, key, value)
                         relative_key = key.replace(consul_subtree_path, "").strip('/')
                         self.write_to_file(destination, relative_key, transformed_value)
                     except:
