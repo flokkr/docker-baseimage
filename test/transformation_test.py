@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import transformation
+from configuration import transformation
 
 def test_to_yaml():
     content = """

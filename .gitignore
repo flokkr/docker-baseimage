@@ -3,3 +3,6 @@ venv
 *.pyc
 configuration/test
 group_vars
+.cache/
+.python-version
+configuration.egg-info/

@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 def render_yaml(yaml_root, prefix=""):
     result = ""
     if isinstance(yaml_root, dict):

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+import StringIO
 import argparse
-import configparser
+import ConfigParser as configparser
 import re
 import signal
 import subprocess
@@ -37,15 +38,16 @@ def mkdir_p(path):
 
 class Starter():
     def __init__(self):
+        self.loop = True
         self.restart = False
         self.process = None
 
     def run_command(self, command):
-        while True:
+        while self.loop:
             args = []
             if len(command) > 1:
                 args.extend(command[1:])
-            self.process = subprocess.Popen(" ".join(command), shell=True, env={"TERM": "linux"}, stdout=sys.stdout)
+            self.process = subprocess.Popen(" ".join(command), shell=True, env=os.environ, stdout=sys.stdout)
             self.restart = False
             self.process.wait()
             if self.process.returncode:
@@ -55,24 +57,33 @@ class Starter():
                 else:
                     print("Error code " + str(self.process.returncode) + " restarting after 10 s")
                     time.sleep(10)
+            else:
+                self.loop = False
+
 
     def stop_process(self):
         if self.process and self.process.returncode != None:
             print("Killing process")
             self.process.kill()
 
+    def sigterm(self):
+        self.loop = False
+        self.stop_process()
+
     def main(self, args):
         parser = argparse.ArgumentParser()
         parser.add_argument("command", help="Command to start", nargs="*")
-        parser.add_argument("--prefix", help="Consul tree prefix")
-        parser.add_argument("--path", help="Consul tree path")
-        parser.add_argument("--destination", help="Destination directory")
+        parser.add_argument("--prefix", help="Consul tree prefix", required=True)
+        parser.add_argument("--path", help="Consul tree path", required=True)
+        parser.add_argument("--destination", help="Destination directory", required=True)
         args = parser.parse_args(args=args)
 
         if args.command:
-            vt = threading.Thread(target=self.run_command, args=(args.command,), daemon=True)
+            vt = threading.Thread(target=self.run_command, args=(args.command,))
+            vt.daemon = True
             vt.start()
 
+        signal.signal(signal.SIGTERM, self.sigterm)
         atexit.register(self.stop_process)
 
         self.poll_consul(args.prefix, args.path, args.destination, args.command)
@@ -107,6 +118,10 @@ class Starter():
                     value = resources[key].content
                     transformed_value = resources[key].content
                     try:
+
+
+
+
                         if configuration:
                             transformed_value = self.transform_value(configuration, consul, key, value)
                         relative_key = key.replace(consul_subtree_path, "").strip('/')
@@ -125,7 +140,7 @@ class Starter():
         dest_file = os.path.join(destination, key)
         parent_dir = os.path.dirname(dest_file)
         mkdir_p(parent_dir)
-
+        print("Saving file from consul to {}".format(dest_file))
         with open(dest_file, "wb") as file:
             file.write(value)
 
@@ -133,17 +148,17 @@ class Starter():
         if not configuration:
             return value
         config = configparser.ConfigParser()
-        config.read_string(configuration, "config.ini")
-        if config['transformation']:
-            for transformation in config['transformation'].keys():
-                pattern = config['transformation'][transformation]
+        config.readfp(StringIO.StringIO(configuration), "config.ini")
+        if "transformation" in config.sections():
+            for transformation in config.options('transformation'):
+                pattern = config.get('transformation', transformation)
                 if re.match(pattern, key):
                     return getattr(client_transformation, transformation)(value, consul)
         return value
 
 
-def main():
-    Starter().main(sys.argv[1:])
+def main(args=sys.argv[1:]):
+    Starter().main(args)
 
 
 if __name__ == "__main__":

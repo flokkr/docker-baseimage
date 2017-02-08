@@ -1,7 +1,7 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CONFIG_TYPE=${CONFIG_TYPE:-simple}
-CONIG_SCRIPT_DIR=$DIR/configuration
+CONIG_SCRIPT_DIR=$DIR/configurer
 echo "Called launcher with command parameters: $@"
 echo "Configuration type: $CONFIG_TYPE"
 
