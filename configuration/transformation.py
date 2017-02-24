@@ -90,7 +90,7 @@ def to_conf(content):
     result = ""
     props = process_properties(content)
     for key in props.keys():
-        result += "export {} {}\n".format(key, props[key])
+        result += "export {}={}\n".format(key, props[key])
     return result
 
 

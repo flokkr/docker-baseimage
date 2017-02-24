@@ -13,31 +13,16 @@ class Simple:
     def __init__(self, args):
         parser = argparse.ArgumentParser()
         parser.add_argument("--destination", help="Destination directory", required=True)
-        parser.add_argument("--defaults", help="Defaults directory", required=True)
         self.args = parser.parse_args(args=args)
         # copy the default files to file.raw in desitnation directory
 
         self.known_formats = ['xml', 'properties', 'yaml', 'yml', 'env', "sh", "cfg", 'conf']
         self.output_dir = self.args.destination
 
-        self.defaults_dir = self.args.defaults
-
         self.configurables = {}
 
     def destination_file_path(self, name, extension):
         return os.path.join(self.output_dir, "{}.{}".format(name, extension))
-
-    def copy_defaults(self):
-        for filename in os.listdir(self.defaults_dir):
-            parts = os.path.splitext(filename)
-            name = parts[0]
-            extension = parts[1][1:]
-            self.configurables[name] = extension
-            print("Configurable file with defaults: {}.{}".format(name, extension))
-            destionation_file = os.path.join(self.output_dir, filename + ".raw")
-            copyfile(os.path.join(self.defaults_dir, filename), destionation_file)
-            with open(destionation_file, "a") as file:
-                file.write("\n")
 
     def write_env_var(self, name, extension, key, value):
         with open(self.destination_file_path(name, extension) + ".raw", "a") as myfile:
@@ -47,15 +32,25 @@ class Simple:
         for key in os.environ.keys():
             p = re.compile("[_\\.]")
             parts = p.split(key)
-            if len(parts) > 1 and parts[1].lower() in self.known_formats:
-                name = parts[0].lower()
+            extension = None
+            name = parts[0].lower()
+            if len(parts) > 1:
                 extension = parts[1].lower()
+                config_key = key[len(name) + len(extension) + 2:].strip()
+            if extension and "!" in extension:
+                splitted = extension.split("!")
+                extension = splitted[0]
+                format = splitted[1]
+                config_key = key[len(name) + len(extension) + len(format) + 3:].strip()
+            else:
+                format = extension
+
+            if extension and extension in self.known_formats:
                 if name not in self.configurables.keys():
                     with open(self.destination_file_path(name, extension) + ".raw", "w") as myfile:
                         myfile.write("")
-                self.configurables[name] = extension
-
-                self.write_env_var(name, extension, key[len(name) + len(extension) + 2:], os.environ[key])
+                self.configurables[name] = (extension, format)
+                self.write_env_var(name, extension, config_key, os.environ[key])
             else:
                 for configurable_name in self.configurables.keys():
                     if key.lower().startswith(configurable_name.lower()):
@@ -64,19 +59,18 @@ class Simple:
     def transform(self):
         for configurable_name in self.configurables.keys():
             name = configurable_name
-            extension = self.configurables[name]
+            extension, format = self.configurables[name]
 
             destination_path = self.destination_file_path(name, extension)
 
             with open(destination_path + ".raw", "r") as myfile:
                 content = myfile.read()
-                transformer_func = getattr(transformation, "to_" + extension)
+                transformer_func = getattr(transformation, "to_" + format)
                 content = transformer_func(content)
                 with open(destination_path, "w") as myfile:
                     myfile.write(content)
 
     def main(self):
-        self.copy_defaults()
 
         # add the
         self.process_envs()
