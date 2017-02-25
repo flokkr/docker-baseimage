@@ -2,7 +2,6 @@
 import StringIO
 import argparse
 import ConfigParser as configparser
-import base64
 import re
 import signal
 import subprocess
@@ -18,7 +17,6 @@ import time
 import thread
 import traceback
 
-import binascii
 from configuration import client_transformation
 from configuration import post_write_hook
 
@@ -109,14 +107,14 @@ class Starter():
             configuration_entry = self.consul.kv.get(prefix + "/config.ini")
             if configuration_entry:
                 configuration = configparser.ConfigParser()
-                configuration.readfp(StringIO.StringIO(binascii.a2b_base64(configuration_entry[1]['Value'])), "config.ini")
+                configuration.readfp(StringIO.StringIO(configuration_entry[1]['Value']), "config.ini")
             while first or loop:
                 consul_subtree_path = (prefix + "/" + path).strip("/")
                 index, data = self.consul.kv.get(consul_subtree_path, recurse=True, index=index)
                 changed = []
                 for d in data:
                     key = d['Key']
-                    value = bytes(base64.b64decode(bytes(d['Value'])))
+                    value = d['Value']
                     if key not in resources.keys():
                         resources[key] = Resource(key, "")
                     resource = resources[key]
