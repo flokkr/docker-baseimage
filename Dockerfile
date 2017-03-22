@@ -13,4 +13,6 @@ ADD setup.py /opt/
 RUN pip install -e /opt
 ENV CONF_DIR=/opt
 ENV JAVA_HOME=/usr/lib/jvm/java-8-oracle
+ADD https://github.com/elek/consul-launcher/releases/download/1.0/linux_amd64_consul-launcher /opt/configurer/consul-launcher
+RUN chmod +x /opt/configurer/consul-launcher
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/opt/launcher.sh"]
