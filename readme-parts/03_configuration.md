@@ -8,7 +8,6 @@ The three main configuration loading mechanis is:
 
  * ```CONFIG_TYPE=simple```: Using some simple default and configuration defined with environment variables.
  * ```CONFIG_TYPE=consul```: Using configuration files (and not list of ```key: value``` pairs) stored in a consul. Supports dynamic restart if the configuration is changing.
- * ```CONFIG_TYPE=springconfig```: Using configuration from the spring config server.
 
 ### Simple configuration
 
