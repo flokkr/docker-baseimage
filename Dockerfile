@@ -13,7 +13,7 @@ ADD launcher.sh ./
 ADD configurer configurer
 
 ADD https://github.com/elek/consul-launcher/releases/download/1.1/linux_amd64_consul-launcher /opt/configurer/consul-launcher
-ADD https://github.com/elek/envtoconf/releases/download/1.0.0/linux_amd64_envtoconf /opt/configurer/envtoconf
+ADD https://github.com/elek/envtoconf/releases/download/1.1.0/linux_amd64_envtoconf /opt/configurer/envtoconf
 RUN chmod +x /opt/configurer/*
 
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/opt/launcher.sh"]
