@@ -118,7 +118,7 @@ It adds btrace javaagent configuration to the JAVA_OPTS (or any other opts defin
 
 ## Changelog
 
-### Version 16
+### Version 17
 
 - Refactored (hopefully simplified) architecture with plugin chain
 - BTrace support
