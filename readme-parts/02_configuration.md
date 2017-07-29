@@ -1,25 +1,28 @@
-## Configuration loading
+## Configuration and extensions
 
-The containers supports multiple configuration loading mechanism. (All of the configuration loading is defined in the [base-docker](https://github.com/elek/docker-bigdata-base) image. The configuration methods are stored in the `/opt/configurer`  directory and could be selected by setting the environment variable `CONFIG_TYPE`
+The flokkr containers support multiple configuration loading mechanism and various extensions. All of the these are defined in the [flokkr baseimage](https://github.com/flokkr/docker-baseimage) and could be activated by environment variables.
 
-You can see various example configuration, ansible and docker-compose scripts at the main [umbrella repository](https://github.com/elek/bigdata-docker).
+The available plugins:
 
-The three main configuration loading mechanis is:
+| Name      | Description                              |
+| --------- | ---------------------------------------- |
+| envtoconf | **Simple onfiguration loading**, suggested for stand-alone docker files. Converts environment variables to xml/property configuration based on naming convention |
+| consul    | **Complex configuration loading from consul**, downloads configuration from consul server and restart when the configuration is changed. Suggested for multi-host setups. |
+| btrace    | Instruments the java option with custom Btrace script (with modifying the JAVA_OPTS) |
 
- * ```CONFIG_TYPE=simple```: Using some simple default and configuration defined with environment variables.
- * ```CONFIG_TYPE=consul```: Using configuration files (and not list of ```key: value``` pairs) stored in a consul. Supports dynamic restart if the configuration is changing.
+### Plugin details
 
-### Simple configuration
+#### ENVTOCONF: Simple configuration loading
 
-This is the default configuration.
+Could be activated by ```CONFIG_TYPE=simple``` settings, but it's the default.
 
-Every configuration file is defined with a list of ```key: value``` pairs, even if they will be converted finally to hadoop xml format.
-
-The destination format is defined by the extensions (or by an additional format specifier)
+Every configuration could be defined with environment variables, and they will be converted finally to *hadoop xml, properties, conf* or other format. The destination format (and the destination file name) is defined with the name of the environment variable according to a naming convention.
 
 The generated files will be saved to the `$CONF_DIR` directory.
 
-#### Naming convention for set config keys from enviroment variables
+The source code of the converter utility can be found in a [separated repository](https://github.com/elek/envtoconf).
+
+##### Naming convention for set config keys from enviroment variables
 
 To set any configuration variable you shold follow the following pattern:
 
@@ -50,20 +53,30 @@ For example:
 SERVER.CONF!CFG_zookeeper.address=zookeeper:2181
 ```
 
-#### Available transformation
+##### Available transformation
 
- * xml: HADOOP xml file format
- * properties: key value pairs with ```:``` as separator
- * cfg: key value pairs with ```=``` as separator
- * conf: key value pairs with space as spearator (spark-defaults is an example)
- * env: key value paris with ```=``` as separator
- * sh: as the env but also includes the export keyword
+*  xml: HADOOP xml file format
 
-#### Example
+*  properties: key value pairs with ```:``` as separator
 
-The simple directory in the [bigdata-docker](https://github.com/elek/bigdata-docker) project contains a [docker-compose](https://github.com/elek/bigdata-docker/blob/master/simple/docker-compose.yaml) example using simple configuration loading.
+*  cfg: key value pairs with ```=``` as separator
 
-### Consul config loading
+*  conf: key value pairs with space as spearator (spark-defaults is an example)
+
+*  env: key value paris with ```=``` as separator
+
+*  sh: as the env but also includes the export keyword
+
+     ##### Configuration reference
+
+     The plugin itself could be configured with the following environment variables.
+
+   | Name        | Default                                  | Description                              |
+   | ----------- | ---------------------------------------- | ---------------------------------------- |
+   | CONF_DIR    | *Set in the docker container definitions* | The location where the configuration files will be saved. |
+   | CONFIG_TYPE | simple                                   | For compatibility reason. If the value is simple, the conversion is active. |
+
+#### CONSUL: Consul config loading
 
 Could be activated with ```CONFIG_TYPE=consul```
 
@@ -71,8 +84,28 @@ Could be activated with ```CONFIG_TYPE=consul```
 
 The source code of the consul based configuration loading and launcher is available at the [elek/consul-launcher](https://github.com/elek/consul-launcher) repository.
 
+| Name        | Default                                  | Description                              |
+| ----------- | ---------------------------------------- | ---------------------------------------- |
+| CONF_DIR    | *Set in the docker container definitions* | The location where the configuration files will be saved. |
+| CONFIG_TYPE | consul                                   | For compatibility reason. If the value is consul, the consul based configuration handling is active. |
+| CONSUL_PATH | conf                                     | The path of the subtree in the consul where the configurations are. |
+| CONSUL_KEY  |                                          | The  path where the configuration for this container should be downloaded from. The effective path will be ```$CONSUL_PATH/$CONSUL_KEY``` |
+
+#### BTRACE: btrace instrumentation
+
+Could be enabled with setting ```BTRACE_ENABLED=true``` or just setting ```BTRACE_SCRIPT```.
+
+It adds btrace javaagent configuration to the JAVA_OPTS (or any other opts defined by BTRACE_OPTS_VAR). The standard output is redirected to ```/tmp/output.log```, and the btrace output will be displayed on the standard output (over a ```/tmp/btrace.out``` file)
+
+| Name            | Default                                  | Description                              |
+| --------------- | ---------------------------------------- | ---------------------------------------- |
+| CONF_DIR        | *Set in the docker container definitions* | The location where the configuration files will be saved. |
+| BTRACE_SCRIPT   | <notset>                                 | The location of the compiled btrace script. Coule be absolute or relative to the ```/opt/plugins/020_btrace/btrace``` |
+| BTRACE_OPTS_VAR | JAVA_OPTS                                | The name of the shell variable where the agent parameters should be injected. |
+
+
 #### Configuration
 
- * `CONSUL_PATH` defines the root of the subtree where the configuration are downloaded from. The root could also contain a configuration `config.ini`. Default is `conf`
+* `CONSUL_PATH` defines the root of the subtree where the configuration are downloaded from. The root could also contain a configuration `config.ini`. Default is `conf`
 
- *  `CONSUL_KEY` is optional. It defines a subdirectory to download the the config files. If both `CONSUL_PATH` and `CONSUL_KEY` are defined, the config files will be downloaded from `$CONSUL_PATH/$CONSUL_KEY` but the config file will be read from `$CONSUL_PATH/config.ini`
+* `CONSUL_KEY` is optional. It defines a subdirectory to download the the config files. If both `CONSUL_PATH` and `CONSUL_KEY` are defined, the config files will be downloaded from `$CONSUL_PATH/$CONSUL_KEY` but the config file will be read from `$CONSUL_PATH/config.ini`
