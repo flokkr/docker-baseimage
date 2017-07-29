@@ -6,3 +6,6 @@ group_vars
 .cache/
 .python-version
 configuration.egg-info/
+
+plugins/020_btrace/btrace
+plugins/020_btrace/test/Start.class
