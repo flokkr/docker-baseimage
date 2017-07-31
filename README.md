@@ -15,6 +15,8 @@ The available plugins:
 | envtoconf | **Simple onfiguration loading**, suggested for stand-alone docker files. Converts environment variables to xml/property configuration based on naming convention |
 | consul    | **Complex configuration loading from consul**, downloads configuration from consul server and restart when the configuration is changed. Suggested for multi-host setups. |
 | btrace    | Instruments the java option with custom Btrace script (with modifying the JAVA_OPTS) |
+| installer | Download a tar file and replace existing product with that. Useful -- for example -- to test RC releases. |
+| sleep     | Wait for a defined amount of seconds. Useful for dirty workarounds (for example wait for all containers to be started and registered in dns server) |
 
 ### Plugin details
 
@@ -73,9 +75,9 @@ SERVER.CONF!CFG_zookeeper.address=zookeeper:2181
 
 *  sh: as the env but also includes the export keyword
 
-     ##### Configuration reference
+      ##### Configuration reference
 
-     The plugin itself could be configured with the following environment variables.
+      The plugin itself could be configured with the following environment variables.
 
    | Name        | Default                                  | Description                              |
    | ----------- | ---------------------------------------- | ---------------------------------------- |
@@ -116,7 +118,27 @@ It adds btrace javaagent configuration to the JAVA_OPTS (or any other opts defin
 
 * `CONSUL_KEY` is optional. It defines a subdirectory to download the the config files. If both `CONSUL_PATH` and `CONSUL_KEY` are defined, the config files will be downloaded from `$CONSUL_PATH/$CONSUL_KEY` but the config file will be read from `$CONSUL_PATH/config.ini`
 
+#### INSTALLER: replace built in components
+
+The original products usually unpacked to the /opt directory during the container build (eg. /opt/hadoop, /opt/spark, etc...). The install plugin deletes the original product directory and replaces it with a newly one downloaded from the internet.
+
+| Name          | Default  | Description                              |
+| ------------- | -------- | ---------------------------------------- |
+| INSTALLER_XXX | <notset> | The value of the environment variable should be an url. If set, the URL will be downloaded and untar-ed to the /opt/xxx directory. For example set ```INSTALER_HADOOP=http://home.apache.org/~shv/hadoop-2.7.4-RC0/https://home.apache.org/~shv/hadoop-2.7.4-RC0/hadoop-2.7.4-RC0.tar.gz``` to test an RC. |
+
+#### SLEEP: sleep for a specified amount of time.
+
+
+
+| Name          | Default  | Description                              |
+| ------------- | -------- | ---------------------------------------- |
+| SLEEP_SECONDS | <notset> | If set, the ```sleep``` bash command will be called with the value of the environment variable. Better to not use this plugin, if possible. |
+
 ## Changelog
+
+### Version 18
+
+* Sleep and installer plugins
 
 ### Version 17
 
