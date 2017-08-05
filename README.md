@@ -12,10 +12,11 @@ The available plugins:
 
 | Name      | Description                              |
 | --------- | ---------------------------------------- |
+| installer | Download a tar file and replace existing product with that. Useful -- for example -- to test RC releases. |
 | envtoconf | **Simple onfiguration loading**, suggested for stand-alone docker files. Converts environment variables to xml/property configuration based on naming convention |
+| retry     | Retries the run of the process. |
 | consul    | **Complex configuration loading from consul**, downloads configuration from consul server and restart when the configuration is changed. Suggested for multi-host setups. |
 | btrace    | Instruments the java option with custom Btrace script (with modifying the JAVA_OPTS) |
-| installer | Download a tar file and replace existing product with that. Useful -- for example -- to test RC releases. |
 | sleep     | Wait for a defined amount of seconds. Useful for dirty workarounds (for example wait for all containers to be started and registered in dns server) |
 
 ### Plugin details
@@ -128,11 +129,20 @@ The original products usually unpacked to the /opt directory during the containe
 
 #### SLEEP: sleep for a specified amount of time.
 
-
-
 | Name          | Default  | Description                              |
 | ------------- | -------- | ---------------------------------------- |
 | SLEEP_SECONDS | <notset> | If set, the ```sleep``` bash command will be called with the value of the environment variable. Better to not use this plugin, if possible. |
+
+#### RETRY: process running retry
+
+The plugin tries to run the entrypoint of the image multiple times. If the process has been exited with non zero exit code, it tries to rerun the command after a sleep. The sleep time increasing with every iteration and the whole process will be stopped anyway after a fix amount of retry. If the process run enough time (60s) the failure counter and sleep time is reseted.  
+
+### Configuration
+
+| Name          | Default  | Description                              |
+| ------------- | -------- | ---------------------------------------- |
+| RETRY_NUMBER  | 10       | Number of times the process will be restarted (in case of non-zero exit code | 
+| RETRY_NORMAL_RUN_DURATION | 60 | After this amount of seconds the RETRY_NUMBER counter will be reseted. Example: After 5 tries the process is started and run successfully 5 minutes. After a non-zer exit, it will be rerun RETRY_NUM (10) times. Example 2: After 5 tries the process is starts, runs for 40 seconds, and exits. The retry will continue with the reamining 5 try. |
 
 ## Changelog
 
