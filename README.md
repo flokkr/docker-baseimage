@@ -144,6 +144,18 @@ The plugin tries to run the entrypoint of the image multiple times. If the proce
 | RETRY_NUMBER  | 10       | Number of times the process will be restarted (in case of non-zero exit code | 
 | RETRY_NORMAL_RUN_DURATION | 60 | After this amount of seconds the RETRY_NUMBER counter will be reseted. Example: After 5 tries the process is started and run successfully 5 minutes. After a non-zer exit, it will be rerun RETRY_NUM (10) times. Example 2: After 5 tries the process is starts, runs for 40 seconds, and exits. The retry will continue with the reamining 5 try. |
 
+#### KERBEROS: download kerberos keytabs and ssl key/truststore
+
+Our total UNSECURE [kerberos server](https://github.com/flokkr/docker-krb5) contains a REST endpoint to download on-the-fly generated kerberos keytabs, java keystores (ssl keystores, trustores). This plugin could be configured to download the files. The plugin also copies krb5.cfg to /etc.
+
+### Configuration
+
+| Name               | Default  | Description                              |
+| ------------------ | -------- | ---------------------------------------- |
+| KERBEROS_SERVER    | krb5     | The name of the UNSECURE kerberos server where the REST endpoint is available on :8081 |
+| KERBEROS_KEYTABS   | <notset> | Space separated list of keytab names. With every element a new keytab will generated to $CONF_DIR/$NAME.keytab with a key for $NAME/$HOSTNAME@EXAMPLE.COM. |
+| KERBEROS_KEYSTORES | <notset> | Space separated list of certificate names. For every name a new keystore file will be generated to the $CONF_DIR/$NAME.keystore which contains a key for cn=$NAME. Trust store  will also be generated to $CONF_DIR/truststore. |
+
 ## Changelog
 
 ### Version 18
