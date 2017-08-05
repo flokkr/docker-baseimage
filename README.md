@@ -158,6 +158,11 @@ Our total UNSECURE [kerberos server](https://github.com/flokkr/docker-krb5) cont
 
 ## Changelog
 
+### Version 19
+
+ * Retry plugin
+ * Kerberos plugin
+
 ### Version 18
 
 * Sleep and installer plugins
