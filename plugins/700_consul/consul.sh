@@ -7,8 +7,8 @@ if [ "true" == "$CONSUL_ENABLED" ] || [ -n "$CONSUL_KEY" ]; then
   CONSUL_PATH=${CONSUL_PATH:-conf}/${CONSUL_KEY:-/}
   #remove leading/trailing and double slashes
   CONSUL_PATH=$(echo $CONSUL_PATH| sed 's/\/\///g' | sed 's/\/*$//g' | sed 's/^\/*//g' )
-  echo "Launch with consul laincher. Consul path: $CONSUL_PATH"
-  $DIR/consul-launcher --path ${CONSUL_PATH} --destination $CONF_DIR "$RUNTIME_ARGUMENTS"
+  echo "Launch with consul launcher. Consul path: $CONSUL_PATH"
+  $DIR/consul-launcher --path ${CONSUL_PATH} --destination $CONF_DIR $RUNTIME_ARGUMENTS
 else
    call-next-plugin "$@"
 fi
