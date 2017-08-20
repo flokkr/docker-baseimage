@@ -1,4 +1,4 @@
-# Bigdata base image
+# Flokkr base image
 
 This repository contains the base docker image [for all other](https://github.com/flokkr?utf8=%E2%9C%93&q=docker&type=&language=) hadoop/bigdata related docker images.
 
@@ -18,6 +18,7 @@ The available plugins:
 | consul    | **Complex configuration loading from consul**, downloads configuration from consul server and restart when the configuration is changed. Suggested for multi-host setups. |
 | btrace    | Instruments the java option with custom Btrace script (with modifying the JAVA_OPTS) |
 | sleep     | Wait for a defined amount of seconds. Useful for dirty workarounds (for example wait for all containers to be started and registered in dns server) |
+| kerberos  | DOwnloads kerberos keytabs and java keystores from the rest endpoint of the unsecure [krb5 dev server](https://github.com/flokkr/docker-krb5)
 
 ### Plugin details
 
@@ -157,6 +158,14 @@ Our total UNSECURE [kerberos server](https://github.com/flokkr/docker-krb5) cont
 | KERBEROS_KEYSTORES | <notset> | Space separated list of certificate names. For every name a new keystore file will be generated to the $CONF_DIR/$NAME.keystore which contains a key for cn=$NAME. Trust store  will also be generated to $CONF_DIR/truststore. |
 
 ## Changelog
+
+### Version 21
+
+ * Custom flokkr group with sudo permission 
+
+### Version 20
+
+ * Consul start bugfix
 
 ### Version 19
 
