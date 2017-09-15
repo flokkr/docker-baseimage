@@ -10,16 +10,16 @@ The flokkr containers support multiple configuration loading mechanism and vario
 
 The available plugins:
 
-| Name      | Description                              |
-| --------- | ---------------------------------------- |
-| installer | Download a tar file and replace existing product with that. Useful -- for example -- to test RC releases. |
-| envtoconf | **Simple onfiguration loading**, suggested for stand-alone docker files. Converts environment variables to xml/property configuration based on naming convention |
-| retry     | Retries the run of the process. |
-| consul    | **Complex configuration loading from consul**, downloads configuration from consul server and restart when the configuration is changed. Suggested for multi-host setups. |
-| btrace    | Instruments the java option with custom Btrace script (with modifying the JAVA_OPTS) |
-| sleep     | Wait for a defined amount of seconds. Useful for dirty workarounds (for example wait for all containers to be started and registered in dns server) |
-| kerberos  | DOwnloads kerberos keytabs and java keystores from the rest endpoint of the unsecure [krb5 dev server](https://github.com/flokkr/docker-krb5)
-
+| Name         | Description                              |
+| ------------ | ---------------------------------------- |
+| installer    | Download a tar file and replace existing product with that. Useful -- for example -- to test RC releases. |
+| envtoconf    | **Simple onfiguration loading**, suggested for stand-alone docker files. Converts environment variables to xml/property configuration based on naming convention |
+| retry        | Retries the run of the process. |
+| consul       | **Complex configuration loading from consul**, downloads configuration from consul server and restart when the configuration is changed. Suggested for multi-host setups. |
+| btrace       | Instruments the java option with custom Btrace script (with modifying the JAVA_OPTS) |
+| sleep        | Wait for a defined amount of seconds. Useful for dirty workarounds (for example wait for all containers to be started and registered in dns server) |
+| kerberos     | Downloads kerberos keytabs and java keystores from the rest endpoint of the unsecure [krb5 dev server](https://github.com/flokkr/docker-krb5)
+| permissionfix| Workaround for docker: fixes the permission of the data volume |
 ### Plugin details
 
 #### ENVTOCONF: Simple configuration loading
@@ -158,6 +158,10 @@ Our total UNSECURE [kerberos server](https://github.com/flokkr/docker-krb5) cont
 | KERBEROS_KEYSTORES | <notset> | Space separated list of certificate names. For every name a new keystore file will be generated to the $CONF_DIR/$NAME.keystore which contains a key for cn=$NAME. Trust store  will also be generated to $CONF_DIR/truststore. |
 
 ## Changelog
+
+### Version 22
+
+ * Permission fixer plugin
 
 ### Version 21
 

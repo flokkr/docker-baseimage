@@ -17,4 +17,4 @@ for ENABLED_PLUGIN in $(echo $ENABLED_PLUGINS); do
 done
 echo ""
 export PLUGIN_DIR="$DIR/plugins"
-source $PLUGIN_DIR/005_installer/installer.sh $(ls -1 $PLUGIN_DIR | sort);
+source $PLUGIN_DIR/002_permissionfix/permissionfix.sh $(ls -1 $PLUGIN_DIR | sort);
