@@ -1,6 +1,6 @@
 
 
-TAG := $(if $(TRAVIS_TAG),$(TRAVIS_TAG),"latest")
+TAG := $(if $(TRAVIS_BRANCH),$(TRAVIS_BRANCH),"latest")
 
 build:
 	docker build -t flokkr/base .
