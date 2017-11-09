@@ -10,5 +10,5 @@ if [ "true" == "$PROMETHEUSJMX_ENABLED" ]; then
   export AGENT_STRING="-javaagent:$EXPORTER_FILE=$PROMETHEUSJMX_AGENTOPTS"
   declare -x $JAVA_OPTS_VAR="$AGENT_STRING ${!JAVA_OPTS_VAR}"
   echo "Process is instrumented with setting $AGENT_STRING"
-
+fi
 call-next-plugin "$@"
