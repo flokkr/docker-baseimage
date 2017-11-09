@@ -8,5 +8,7 @@ if [ "true" == "$PROMETHEUSJMX_ENABLED" ]; then
      wget https://kv.anzix.net/jmxpromo.jar -O $EXPORTER_FILE
   fi
   export AGENT_STRING="-javaagent:$EXPORTER_FILE=$PROMETHEUSJMX_AGENTOPTS"
+  declare -x $JAVA_OPTS_VAR="$AGENT_STRING ${!JAVA_OPTS_VAR}"
+  echo "Process is instrumented with setting $AGENT_STRING"
 
 call-next-plugin "$@"
