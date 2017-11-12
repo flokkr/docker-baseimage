@@ -8,7 +8,7 @@ ENV CONF_DIR=/opt JAVA_HOME=/usr/lib/jvm/java-8-oracle
 WORKDIR /opt
 ENV PERMISSION_FIX=true
 ADD .bashrc /root/
-RUN git clone https://github.com/flokkr/launcher.git
+RUN git clone https://github.com/flokkr/launcher.git #1
 RUN find -name onbuild.sh | xargs -n1 bash -c
 
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/opt/launcher/launcher.sh"]
