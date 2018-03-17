@@ -3,7 +3,7 @@
 TAG := $(if $(TRAVIS_BRANCH),$(TRAVIS_BRANCH),"latest")
 
 build:
-	docker build -t flokkr/base .
+	docker build --no-cache -t flokkr/base .
 
 deploy:
 	docker tag flokkr/base flokkr/base:$(TAG)
