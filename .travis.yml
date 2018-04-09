@@ -4,13 +4,13 @@ services:
    - docker
 
 script:
-   - make build
+   - build.sh build
 
 before_deploy:
    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 
 deploy:
    - provider: script
-     script: make deploy
+     script: build.sh deploy
      on:
         all_branches: true

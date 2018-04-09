@@ -1,4 +1,5 @@
 FROM frolvlad/alpine-oraclejdk8:cleaned
+ARG LAUNCHER_HASH=master
 VOLUME /data
 RUN addgroup flokkr
 RUN apk add --update bash ca-certificates openssl jq curl sudo git && rm -rf /var/cache/apk/* && update-ca-certificates && echo "%flokkr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/flokkr
@@ -8,7 +9,7 @@ ENV CONF_DIR=/opt JAVA_HOME=/usr/lib/jvm/java-8-oracle
 WORKDIR /opt
 ENV PERMISSION_FIX=true
 ADD .bashrc /root/
-RUN git clone https://github.com/flokkr/launcher.git #1
+RUN git clone https://github.com/flokkr/launcher.git && git --work-tree=/opt/launcher --git-dir=/opt/launcher/.git checkout ${LAUNCHER_HASH}
 RUN find -name onbuild.sh | xargs -n1 bash -c
 
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/opt/launcher/launcher.sh"]
