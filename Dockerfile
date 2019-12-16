@@ -1,10 +1,12 @@
-FROM alpine
+FROM centos:8
 ARG LAUNCHER_HASH=master
 VOLUME /data
-RUN addgroup flokkr
-RUN apk add --update bash python3 dumb-init procps ca-certificates openssl jq curl sudo git openjdk8 && rm -rf /var/cache/apk/* && update-ca-certificates && echo "%flokkr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/flokkr && ln -s /usr/bin/python3 /usr/bin/python
-RUN pip3 install robotframework
-ENV CONF_DIR=/opt JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk/
+RUN groupadd flokkr
+RUN yum install epel-release -y && yum -y update && yum install jq git java-1.8.0-openjdk-devel python3-pip wget sudo nc -y && yum clean all
+RUN pip3 install robotframework robotframework-requests 
+RUN wget -O /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 && chmod +x /usr/bin/dumb-init
+RUN echo "%flokkr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/flokkr
+ENV CONF_DIR=/opt JAVA_HOME=/usr/lib/jvm/java-openjdk/
 
 WORKDIR /opt
 ENV PERMISSION_FIX=true
