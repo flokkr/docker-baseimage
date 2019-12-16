@@ -13,7 +13,7 @@ The available plugins:
 | Name         | Description                              |
 | ------------ | ---------------------------------------- |
 | installer    | Download a tar file and replace existing product with that. Useful -- for example -- to test RC releases. |
-| envtoconf    | **Simple onfiguration loading**, suggested for stand-alone docker files. Converts environment variables to xml/property configuration based on naming convention |
+| envtoconf    | **Simple configuration loading**, suggested for stand-alone docker files. Converts environment variables to xml/property configuration based on naming convention |
 | retry        | Retries the run of the process. |
 | consul       | **Complex configuration loading from consul**, downloads configuration from consul server and restart when the configuration is changed. Suggested for multi-host setups. |
 | btrace       | Instruments the java option with custom Btrace script (with modifying the JAVA_OPTS) |
@@ -34,7 +34,7 @@ The source code of the converter utility can be found in a [separated repository
 
 ##### Naming convention for set config keys from enviroment variables
 
-To set any configuration variable you shold follow the following pattern:
+To set any configuration variable you should follow the following pattern:
 
 ```
 NAME.EXTENSION_configkey=VALUE
@@ -71,9 +71,9 @@ SERVER.CONF!CFG_zookeeper.address=zookeeper:2181
 
 *  cfg: key value pairs with ```=``` as separator
 
-*  conf: key value pairs with space as spearator (spark-defaults is an example)
+*  conf: key value pairs with space as separator (spark-defaults is an example)
 
-*  env: key value paris with ```=``` as separator
+*  env: key value pairs with ```=``` as separator
 
 *  sh: as the env but also includes the export keyword
 
@@ -110,7 +110,7 @@ It adds btrace javaagent configuration to the JAVA_OPTS (or any other opts defin
 | Name            | Default                                  | Description                              |
 | --------------- | ---------------------------------------- | ---------------------------------------- |
 | CONF_DIR        | *Set in the docker container definitions* | The location where the configuration files will be saved. |
-| BTRACE_SCRIPT   | <notset>                                 | The location of the compiled btrace script. Coule be absolute or relative to the ```/opt/plugins/020_btrace/btrace``` |
+| BTRACE_SCRIPT   | <notset>                                 | The location of the compiled btrace script. Could be absolute or relative to the ```/opt/plugins/020_btrace/btrace``` |
 | BTRACE_OPTS_VAR | JAVA_OPTS                                | The name of the shell variable where the agent parameters should be injected. |
 
 
@@ -142,8 +142,8 @@ The plugin tries to run the entrypoint of the image multiple times. If the proce
 
 | Name          | Default  | Description                              |
 | ------------- | -------- | ---------------------------------------- |
-| RETRY_NUMBER  | 10       | Number of times the process will be restarted (in case of non-zero exit code | 
-| RETRY_NORMAL_RUN_DURATION | 60 | After this amount of seconds the RETRY_NUMBER counter will be reseted. Example: After 5 tries the process is started and run successfully 5 minutes. After a non-zer exit, it will be rerun RETRY_NUM (10) times. Example 2: After 5 tries the process is starts, runs for 40 seconds, and exits. The retry will continue with the reamining 5 try. |
+| RETRY_NUMBER  | 10       | Number of times the process will be restarted (in case of non-zero exit code |
+| RETRY_NORMAL_RUN_DURATION | 60 | After this amount of seconds the RETRY_NUMBER counter will be reseted. Example: After 5 tries the process is started and run successfully 5 minutes. After a non-zero exit, it will be rerun RETRY_NUM (10) times. Example 2: After 5 tries the process is starts, runs for 40 seconds, and exits. The retry will continue with the remaining 5 try. |
 
 #### KERBEROS: download kerberos keytabs and ssl key/truststore
 
@@ -165,7 +165,7 @@ Our total UNSECURE [kerberos server](https://github.com/flokkr/docker-krb5) cont
 
 ### Version 21
 
- * Custom flokkr group with sudo permission 
+ * Custom flokkr group with sudo permission
 
 ### Version 20
 
@@ -200,6 +200,6 @@ Our total UNSECURE [kerberos server](https://github.com/flokkr/docker-krb5) cont
 
 ### Version 13
 
-* Spring configserver based configuratio has been removed
+* Spring configserver based configuration has been removed
 * Consul based configuration reader ported to go
 * Client side configuration file has been removed
