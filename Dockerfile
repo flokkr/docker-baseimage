@@ -4,7 +4,7 @@ VOLUME /data
 RUN groupadd flokkr
 RUN yum install epel-release -y && \
    yum -y update && yum install -y jq git java-1.8.0-openjdk-devel python3-pip wget sudo nc which && \
-   alternatives --set python /usr/bin/python3.6 && \
+   alternatives --set python /usr/bin/python3 && \
    yum clean all
 RUN pip3 install robotframework robotframework-requests
 RUN wget -O /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 && chmod +x /usr/bin/dumb-init
