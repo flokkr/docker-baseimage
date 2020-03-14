@@ -3,7 +3,11 @@ ARG LAUNCHER_HASH=master
 VOLUME /data
 RUN groupadd flokkr
 RUN yum install epel-release -y && \
-   yum -y update && yum install -y jq git java-1.8.0-openjdk-devel python3-pip wget sudo nc which && \
+   yum -y update && yum install -y jq git \
+   java-1.8.0-openjdk-devel \
+   java-13-openjdk-devel \
+   python3-pip \
+   wget sudo nc which && \
    alternatives --set python /usr/bin/python3 && \
    yum clean all
 RUN pip3 install robotframework robotframework-requests
