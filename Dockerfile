@@ -5,18 +5,13 @@ RUN groupadd flokkr
 RUN yum install epel-release -y && \
    yum -y update && \
    yum install -y jq git \
-   java-1.8.0-openjdk-devel \
-   java-latest-openjdk-devel \
-   python3-pip \
    unzip \
    wget sudo nc which && \
-   alternatives --set python /usr/bin/python3 && \
    yum clean all && \
    rm /etc/krb5.conf
-RUN pip3 install robotframework robotframework-requests
 RUN wget -O /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 && chmod +x /usr/bin/dumb-init
 RUN echo "%flokkr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/flokkr
-ENV CONF_DIR=/opt JAVA_HOME=/usr/lib/jvm/java-openjdk/
+ENV CONF_DIR=/opt
 
 WORKDIR /opt
 ENV PERMISSION_FIX=true
